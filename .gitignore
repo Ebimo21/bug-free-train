@@ -2,6 +2,9 @@
 __pycache__
 venv
 env
+.env
+auto.py
+
 
 # OS generated files #
 ######################
