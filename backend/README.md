@@ -20,7 +20,7 @@ The API will return three error types when requests fail:
 
 
 ## Endpoints
-## GET '/categories'
+#### GET '/categories'
 - General:
     - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category and its success value
     - Request Arguments: None
@@ -39,7 +39,7 @@ The API will return three error types when requests fail:
   "success": true
 }
 
-## GET '/questions'
+#### GET '/questions'
 - General:
     - Fetches a dictionary of questions with question, answer, difficulty, category and id as key and their corresponding values
     - Request Arguments: None
@@ -91,15 +91,31 @@ The API will return three error types when requests fail:
 }
 
 
+#### POST '/questions/new'
+- General:
+    - Creates a new question using the submitted question, answer, difficulty and category. 
+    - Returns the id of the created book, success value and total books. 
+    - Request Body: json object with submitted question, answer, difficulty and category
+- Sample: `curl -X POST http://localhost:5000/questions/new -H "Content-Type:application/json" -d "{\"question\": \"What is the Wuestion?\", \"answer\": \"This is the answer.\", \"difficulty\": 1, \"category\": 2}`
+
+{
+  "question_id": 41,
+  "success": true,
+  "total_questions": 19
+}
+
+
+
 #### POST '/questions'
 - General: 
     - Searches for questions using a search term
     - Request Body: json object with searchTerm as `key` and search search string as `value`
-    - Returns: An object with keys categories, questions, total questions, current category and success 
+    - Returns: An object with categories, questions, total questions, current category and success keys
 - Sample: `curl -X POST http://localhost:5000/questions -H "Content-Type:application/json" -d "{\"searchTerm\": \"first\"}"`
 
+
 {
-  "current_category": "Null",
+  "current_category": "History",
   "questions": [
     {
       "answer": "Tom Cruise",
@@ -107,12 +123,11 @@ The API will return three error types when requests fail:
       "difficulty": 4,
       "id": 4,
       "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
-    },
+    }
   ],
   "success": true,
   "total_questions": 4
 }
-
 
 #### GET '/categories/{category_id}/questions'
 - General: 
@@ -135,13 +150,11 @@ The API will return three error types when requests fail:
   "total_questions": 3
 }
 
-
-
 #### GET '/quizzes'
 - General: 
-    - Fetches a dictionary of questions, success, and total questions
-    - Request Parameter: None
-    - Returns: An object with  questions, total questions, and success 
+    - Fetches a random question from a choosen category
+    - Request body: a json object with id of previous answered questions in a list and quiz category as an object
+    - Returns: An object with random questions, and success status 
 - Sample: `curl -X POST http://localhost:5000/quizzes -H "Content-Type:application/json" -d "{\"previous_questions\":[1], \"quiz_category\":{\"id\": \"1\"}}"`
 
 {

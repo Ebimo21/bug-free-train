@@ -159,7 +159,11 @@ def create_app(test_config=None):
                                 difficulty=req['difficulty'],
                                 category=req['category'])
             question.insert()
-            return jsonify({'success': True})
+
+            return jsonify({'success': True,
+                            'question_id': question.id,
+                            "total_questions": len(Question.query.all())
+                            })
 
         except BaseException:
             abort(422)
@@ -248,6 +252,7 @@ def create_app(test_config=None):
             val = formatted_questions
             past = prev
             count = 0
+
             for x in past:
                 num = 0
                 for y in val:
@@ -281,7 +286,8 @@ def create_app(test_config=None):
     @app.errorhandler(422)
     def unprocessable(error):
         return (
-            jsonify({"success": False, "error": 422, "message": "unprocessable"}),
+            jsonify({"success": False, "error": 422,
+                     "message": "unprocessable"}),
             422,
         )
 
