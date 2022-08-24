@@ -208,8 +208,6 @@ def create_app(test_config=None):
             categories = Category.query.get(cat_id)
         
             categories_id = str(categories.id)
-            print(categories.id)
-            print(categories_id)
             questions = Question.query.filter(
                 Question.category == categories_id).all()
             formatted_questions = [question.format() for question in questions]
