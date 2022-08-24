@@ -243,9 +243,11 @@ def create_app(test_config=None):
             prev = req['previous_questions']
             category = req['quiz_category']
 
-            questions = Question.query.filter(
-                Question.category == category['id']).all()
-
+            if category['id'] != 0:
+                questions = Question.query.filter(
+                    Question.category == category['id']).all()
+            else:
+                questions = Question.query.all()
             if questions == []:
                 abort(404)
             formatted_questions = [question.format() for question in questions]
