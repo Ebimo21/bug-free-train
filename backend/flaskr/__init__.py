@@ -11,6 +11,7 @@ from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
+
 def paginate_questions(request, selection):
     page = request.args.get("page", 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
@@ -20,6 +21,7 @@ def paginate_questions(request, selection):
     current_questions = questions[start:end]
 
     return current_questions
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -84,7 +86,6 @@ def create_app(test_config=None):
         if request.method != "GET":
             abort(405)
 
-
         page = request.args.get('page', 1, type=int)
         start = (page - 1) * 10
         end = start + QUESTIONS_PER_PAGE
@@ -92,10 +93,10 @@ def create_app(test_config=None):
         questions = Question.query.all()
 
         if questions is None:
-                abort(404)
+            abort(404)
 
         categories = Category.query.all()
-        
+
         formatted_questions = [question.format() for question
                                in questions]
         formatted_categories = {category.id: category.type
@@ -120,10 +121,11 @@ def create_app(test_config=None):
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_a_category(question_id):
         try:
-            item = Question.query.filter(Question.id == question_id).one_or_none()
-            
+            item = Question.query.filter(
+                Question.id == question_id).one_or_none()
+
             if item is None:
-                    abort(404)
+                abort(404)
 
             item.delete()
             selection = Question.query.order_by(Question.id).all()
@@ -136,7 +138,7 @@ def create_app(test_config=None):
                 'questions': current_questions
             })
 
-        except:
+        except BaseException:
             abort(422)
     '''
     @TODO:
@@ -159,7 +161,7 @@ def create_app(test_config=None):
             question.insert()
             return jsonify({'success': True})
 
-        except:
+        except BaseException:
             abort(422)
 
     '''
@@ -178,7 +180,6 @@ def create_app(test_config=None):
         questions = db.session.query(Question).filter(
             Question.question.ilike(f'%{search_q["searchTerm"]}%')).all()
 
-           
         start = 0
         end = start + QUESTIONS_PER_PAGE
 
@@ -206,7 +207,7 @@ def create_app(test_config=None):
 
         try:
             categories = Category.query.get(cat_id)
-        
+
             categories_id = str(categories.id)
             questions = Question.query.filter(
                 Question.category == categories_id).all()
@@ -217,10 +218,8 @@ def create_app(test_config=None):
                 'total_questions': len(formatted_questions),
                 'success': True
             })
-        except:
+        except BaseException:
             abort(404)
-
-
 
     '''
     @TODO:
@@ -242,9 +241,9 @@ def create_app(test_config=None):
 
             questions = Question.query.filter(
                 Question.category == category['id']).all()
-    
+
             if questions == []:
-              abort(404)
+                abort(404)
             formatted_questions = [question.format() for question in questions]
             val = formatted_questions
             past = prev
@@ -265,22 +264,19 @@ def create_app(test_config=None):
                 'question': val[rand] if count != 0 else "",
                 'success': True
             })
-        except:
+        except BaseException:
             abort(404)
-    
+
     '''
     @TODO:
     Create error handlers for all expected errors
     including 404 and 422.
     '''
 
-    
     @app.errorhandler(404)
     def not_found(error):
-        return (
-            jsonify({"success": False, "error": 404, "message": "resource not found"}),
-            404,
-        )
+        return (jsonify({"success": False, "error": 404,
+                         "message": "resource not found"}), 404, )
 
     @app.errorhandler(422)
     def unprocessable(error):
@@ -291,19 +287,16 @@ def create_app(test_config=None):
 
     @app.errorhandler(400)
     def bad_request(error):
-        return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
+        return jsonify({"success": False, "error": 400,
+                       "message": "bad request"}), 400
 
     @app.errorhandler(405)
     def not_found(error):
-        return (
-            jsonify({"success": False, "error": 405, "message": "method not allowed"}),
-            405,
-        )
-    
+        return (jsonify({"success": False, "error": 405,
+                         "message": "method not allowed"}), 405, )
+
     @app.errorhandler(500)
     def not_found(error):
-        return (
-            jsonify({"success": False, "error": 500, "message": "internal server error"}),
-            500,
-        )
+        return (jsonify({"success": False, "error": 500,
+                         "message": "internal server error"}), 500, )
     return app
